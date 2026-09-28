@@ -13,13 +13,15 @@ namespace ItemService.RabbitMqClients
         private IModel _channel;
         private IProcessaEvento _processaEvento;
 
-        public RabbitMqSubscriber(IConfiguration configuration)
+        public RabbitMqSubscriber(IConfiguration configuration, IProcessaEvento processaEvento)
         {
+            _processaEvento = processaEvento;
+
             _configuration = configuration;
             _connection = new ConnectionFactory() 
-            { 
-                HostName = "localhost", 
-                Port = 8002 
+            {
+                HostName = _configuration["RabbitMqHost"],
+                Port = Int32.Parse(_configuration["RabbitMqPort"])
             }.CreateConnection();
 
             _channel = _connection.CreateModel();
@@ -42,9 +44,5 @@ namespace ItemService.RabbitMqClients
 
             return Task.CompletedTask;
         }
-    }
-
-    public interface IRabbitMqSubscriber
-    {
     }
 }
